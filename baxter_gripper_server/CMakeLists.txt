@@ -20,8 +20,8 @@ find_package(Boost REQUIRED COMPONENTS system)
 ## catkin specific configuration ##
 ###################################
 catkin_package(
-  #   INCLUDE_DIRS include
-  #  LIBRARIES baxter_gripper_action
+  INCLUDE_DIRS include
+  LIBRARIES baxter_gripper_action
   CATKIN_DEPENDS
   actionlib
   control_msgs

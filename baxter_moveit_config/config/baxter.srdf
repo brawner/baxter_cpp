@@ -63,6 +63,15 @@
         <joint name="right_w2" value="0" />
     </group_state>
     <group_state name="left_neutral" group="left_arm">
+        <joint name="left_e0" value="-0.848674869927978" />
+        <joint name="left_e1" value="1.8676216071166993" />
+        <joint name="left_s0" value="-0.048320394763183595" />
+        <joint name="left_s1" value="-0.6753350410949708" />
+        <joint name="left_w0" value="0.8762865240783692" />
+        <joint name="left_w1" value="0.8352525380493164" />
+        <joint name="left_w2" value="-0.6446554253723145" />
+    </group_state>
+    <group_state name="left_rethink_neutral" group="left_arm">
         <joint name="left_e0" value="0" />
         <joint name="left_e1" value="0.75" />
         <joint name="left_s0" value="0" />
