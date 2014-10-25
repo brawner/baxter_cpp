@@ -54,7 +54,7 @@ BaxterHardwareInterface::BaxterHardwareInterface(bool in_simulation)
   }
   else
   {
-    ROS_INFO_STREAM_NAMED("hardware_interface","Running in hardware mode");
+    ROS_INFO_STREAM_NAMED("hardware_interface","Running in hardware mode at " << loop_hz_);
     right_arm_hw_.reset(new baxter_control::ArmHardwareInterface("right",loop_hz_));
     left_arm_hw_.reset(new baxter_control::ArmHardwareInterface("left",loop_hz_));
   }
@@ -65,6 +65,12 @@ BaxterHardwareInterface::BaxterHardwareInterface(bool in_simulation)
   // Start the shared joint state subscriber
   sub_joint_state_ = nh_.subscribe<sensor_msgs::JointState>("/robot/joint_states", 1,
                      &BaxterHardwareInterface::stateCallback, this);
+
+  sub_follow_left_joint_trajectory_ = nh_.subscribe<control_msgs::FollowJointTrajectoryActionGoal>("/robot/left_velocity_trajectory_controller/follow_joint_trajectory/goal", 1,
+                     &BaxterHardwareInterface::moveitKickoff, this);
+
+  sub_follow_right_joint_trajectory_ = nh_.subscribe<control_msgs::FollowJointTrajectoryActionGoal>("/robot/right_velocity_trajectory_controller/follow_joint_trajectory/goal", 1,
+                     &BaxterHardwareInterface::moveitKickoff, this);
 
   // Wait for first state message to be recieved if we are not in simulation
   if (!in_simulation_)
@@ -128,6 +134,11 @@ BaxterHardwareInterface::~BaxterHardwareInterface()
   //baxter_util_.disableBaxter();
 }
 
+void BaxterHardwareInterface::moveitKickoff(control_msgs::FollowJointTrajectoryActionGoal) {
+  ROS_INFO_STREAM_NAMED("hardware_interface","Kicking off request");
+  last_request_time_ = ros::Time::now();
+}
+
 bool BaxterHardwareInterface::stateExpired()
 {
   // Check that we have a non-expired state message
@@ -170,8 +181,14 @@ void BaxterHardwareInterface::update(const ros::TimerEvent& e)
   controller_manager_->update(ros::Time::now(), elapsed_time_);
 
   // Output
-  right_arm_hw_->write(elapsed_time_);
-  left_arm_hw_->write(elapsed_time_);
+  ros::Duration elapsed_since_cmd = ros::Time::now() - last_request_time_;
+  ROS_INFO_STREAM_NAMED("hardware_interface", "Since cmd: " << elapsed_since_cmd);
+  
+  if (elapsed_since_cmd.toSec() < 5) {
+      right_arm_hw_->write(elapsed_time_);
+      left_arm_hw_->write(elapsed_time_);
+    }
+
 }
 
 } // namespace
@@ -208,6 +225,7 @@ int main(int argc, char** argv)
 
   return 0;
 }
+
 
 
 

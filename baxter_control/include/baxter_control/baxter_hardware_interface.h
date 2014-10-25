@@ -51,6 +51,8 @@
 #include <hardware_interface/joint_state_interface.h>
 #include <hardware_interface/joint_mode_interface.h>
 #include <hardware_interface/robot_hw.h>
+#include <control_msgs/FollowJointTrajectoryAction.h>
+
 
 // Baxter
 #include <baxter_control/baxter_utilities.h>
@@ -105,6 +107,11 @@ private:
 
   // Subscriber
   ros::Subscriber sub_joint_state_;
+  ros::Subscriber sub_follow_right_joint_trajectory_;
+  ros::Subscriber sub_follow_left_joint_trajectory_;
+  ros::Time last_request_time_;
+
+  void moveitKickoff(control_msgs::FollowJointTrajectoryActionGoal);
 
 public:
 
