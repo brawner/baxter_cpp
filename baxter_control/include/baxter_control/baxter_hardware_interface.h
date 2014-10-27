@@ -110,6 +110,7 @@ private:
   ros::Subscriber sub_follow_right_joint_trajectory_;
   ros::Subscriber sub_follow_left_joint_trajectory_;
   ros::Time last_request_time_;
+  ros::Duration cmd_length_;
 
   void moveitKickoff(control_msgs::FollowJointTrajectoryActionGoal);
 

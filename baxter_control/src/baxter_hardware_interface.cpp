@@ -134,9 +134,13 @@ BaxterHardwareInterface::~BaxterHardwareInterface()
   //baxter_util_.disableBaxter();
 }
 
-void BaxterHardwareInterface::moveitKickoff(control_msgs::FollowJointTrajectoryActionGoal) {
+void BaxterHardwareInterface::moveitKickoff(control_msgs::FollowJointTrajectoryActionGoal g) {
   ROS_INFO_STREAM_NAMED("hardware_interface","Kicking off request");
   last_request_time_ = ros::Time::now();
+  trajectory_msgs::JointTrajectory t = g.goal.trajectory;
+  cmd_length_ = t.points[t.points.size() - 1].time_from_start;
+  //ROS_INFO_STREAM_NAMED("hardware_interface","Goal time: " << duration.toSec());
+
 }
 
 bool BaxterHardwareInterface::stateExpired()
@@ -184,7 +188,7 @@ void BaxterHardwareInterface::update(const ros::TimerEvent& e)
   ros::Duration elapsed_since_cmd = ros::Time::now() - last_request_time_;
   //ROS_INFO_STREAM_NAMED("hardware_interface", "Since cmd: " << elapsed_since_cmd);
   
-  if (elapsed_since_cmd.toSec() < 5) {
+  if (elapsed_since_cmd.toSec() < cmd_length_.toSec() + 1) {
       right_arm_hw_->write(elapsed_time_);
       left_arm_hw_->write(elapsed_time_);
     }
