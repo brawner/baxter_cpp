@@ -188,7 +188,7 @@ void BaxterHardwareInterface::update(const ros::TimerEvent& e)
   ros::Duration elapsed_since_cmd = ros::Time::now() - last_request_time_;
   //ROS_INFO_STREAM_NAMED("hardware_interface", "Since cmd: " << elapsed_since_cmd);
   
-  if (elapsed_since_cmd.toSec() < cmd_length_.toSec() + 1) {
+  if (elapsed_since_cmd.toSec() < cmd_length_.toSec() + 3) {
       right_arm_hw_->write(elapsed_time_);
       left_arm_hw_->write(elapsed_time_);
     }
